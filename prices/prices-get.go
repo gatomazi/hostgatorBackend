@@ -1,9 +1,9 @@
 package prices
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
+	"testeH/database"
 	"testeH/models"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -11,32 +11,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var db = database.GetDB()
+
 //GetAll -
 func GetAll(c *gin.Context) {
+	var shared map[string]interface{} = make(map[string]interface{}, 0)
+	var products map[string]interface{} = make(map[string]interface{}, 0)
 
-	db, err := sql.Open("mysql", "hostgator:hostgator123@tcp(172.18.0.2:3306)/teste")
-	// db, err = sql.Open("mysql", "XHFHkmpD8B:Mb6k8MT6RS@tcp(remotemysql.com)/XHFHkmpD8B")
-
-	err = db.Ping()
+	rowsPrice, err := db.Query("SELECT * FROM prices;")
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rowsPrice.Close()
 
-	// var shared map[string]interface{} = make(map[string]interface{}, 0)
-	// var products map[string]interface{} = make(map[string]interface{}, 0)
-	// var planos map[string]interface{} = make(map[string]interface{}, 0)
+	var prices []interface{}
 
-	// PlanoP := models.Product{ID: 5, Name: "Plano P"}
-	// PlanoM := models.Product{ID: 12, Name: "Plano M"}
-	// PlanoTurbo := models.Product{ID: 16, Name: "Plano Turbo"}
+	for rowsPrice.Next() {
+		var singlePrice models.Product
+		var objMount map[string]models.Product = make(map[string]models.Product, 0)
+		//Scan nas variaveis do banco para a variavel vinho
+		rowsPrice.Scan(&singlePrice.ID, &singlePrice.Name, &singlePrice.CleanName)
+		nameIndex := singlePrice.CleanName
+		singlePrice.CleanName = ""
+		objMount[nameIndex] = singlePrice
+		prices = append(prices, objMount)
+	}
 
-	// planos["planoP"] = PlanoP
-	// planos["planoM"] = PlanoM
-	// planos["planoTurbo"] = PlanoTurbo
+	products["products"] = prices
+	shared["shared"] = products
 
-	// products["products"] = planos
-	// shared["shared"] = products
-	// c.JSON(http.StatusOK, shared)
+	c.JSON(http.StatusOK, shared)
 	return
 }
 

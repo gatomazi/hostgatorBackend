@@ -7,9 +7,10 @@ package models
 // }
 
 type Product struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Cycle Cycle  `json:"cycle,omitempty"`
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	CleanName string `json:"cleanName,omitempty"`
+	Cycle     Cycle  `json:"cycle,omitempty"`
 }
 
 type Cycle struct {
