@@ -2,7 +2,6 @@ version: "2"
 services:
   golang:
     image: "golang:1.13-alpine3.11"
-    command: go run main.go
     links:
       - mysql
   mysql:

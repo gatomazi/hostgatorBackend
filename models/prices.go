@@ -6,11 +6,11 @@ package models
 // 	PlanoTurbo PlanInfo `json:"PlanoTurbo,omitempty"`
 // }
 
-type Product struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	CleanName string `json:"cleanName,omitempty"`
-	Cycle     Cycle  `json:"cycle,omitempty"`
+type Plan struct {
+	ID        int           `json:"id"`
+	Name      string        `json:"name"`
+	CleanName string        `json:"cleanName,omitempty"`
+	Cycle     []interface{} `json:"cycle,omitempty"`
 }
 
 type Cycle struct {
@@ -23,6 +23,7 @@ type Cycle struct {
 }
 
 type CycleInfo struct {
+	Type       string `json:"type,omitempty"`
 	PriceRenew string `json:"priceRenew"`
 	PriceOrder string `json:"priceOrder"`
 	Months     int    `json:"months"`

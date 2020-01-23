@@ -1,6 +1,8 @@
 package prices
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"testeH/database"
@@ -23,31 +25,56 @@ func GetAll(c *gin.Context) {
 		log.Fatal(err)
 	}
 	defer rowsPrice.Close()
-
-	var prices []interface{}
-
-	for rowsPrice.Next() {
-		var singlePrice models.Product
-		var objMount map[string]models.Product = make(map[string]models.Product, 0)
-		//Scan nas variaveis do banco para a variavel vinho
-		rowsPrice.Scan(&singlePrice.ID, &singlePrice.Name, &singlePrice.CleanName)
-		nameIndex := singlePrice.CleanName
-		singlePrice.CleanName = ""
-		objMount[nameIndex] = singlePrice
-		prices = append(prices, objMount)
-	}
-
-	products["products"] = prices
+	products["products"] = selectPlan(rowsPrice)
 	shared["shared"] = products
 
 	c.JSON(http.StatusOK, shared)
 	return
 }
 
+func selectPlan(rowsPrice *sql.Rows) (prices []interface{}) {
+
+	for rowsPrice.Next() {
+		var singlePlan models.Plan
+		var objMount map[string]models.Plan = make(map[string]models.Plan, 0)
+		//Scan nas variaveis do banco para a variavel vinho
+		rowsPrice.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
+		nameIndex := singlePlan.CleanName
+		singlePlan.CleanName = ""
+
+		singlePlan.Cycle = selectCycle(singlePlan.ID)
+
+		objMount[nameIndex] = singlePlan
+		prices = append(prices, objMount)
+	}
+	return
+}
+
+func selectCycle(idPlan int) (cycles []interface{}) {
+	rowsPrice, err := db.Query("SELECT type, priceRenew, priceOrder, months FROM cycles WHERE idPlan = ?;", idPlan)
+	fmt.Println(idPlan)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rowsPrice.Next() {
+		var singleCycle models.CycleInfo
+		var objMount map[string]models.CycleInfo = make(map[string]models.CycleInfo, 0)
+		//Scan nas variaveis do banco para a variavel vinho
+		rowsPrice.Scan(&singleCycle.Type, &singleCycle.PriceRenew, &singleCycle.PriceOrder, &singleCycle.Months)
+		fmt.Println(singleCycle)
+		nameIndex := singleCycle.Type
+		singleCycle.Type = ""
+
+		objMount[nameIndex] = singleCycle
+		cycles = append(cycles, objMount)
+	}
+	return
+}
+
 //GetOne -
 func GetOne(c *gin.Context) {
 	// c.Param("id")
-	var result []models.Product
+	var result []models.Plan
 	var res interface{} = make(map[string]interface{}, 0)
 
 	res.(map[string]interface{})["shared"].(map[string]interface{})["products"] = result
