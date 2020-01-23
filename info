@@ -1,0 +1,17 @@
+O desafio
+- Criar uma API que disponibilize os preços como este exemplo:
+https://7ac2b8ab-f3e5-4534-863d-90dd424a6405.mock.pstmn.io/prices
+- A API também deve disponibilizar o acesso dos preços por ID de produto.
+https://API_URL/prices/{ID} ;
+Implementação
+- A API deve seguir o padrão REST;
+- Utilizar os verbos e status HTTP corretamente;
+- A API não precisa de autenticação;
+- A aplicação precisa estar coberta por testes unitários;
+- Os dados devem ser provenientes de um banco de dados;
+- Baseado no JSON, criar a estrutura do banco de dados normalizada;
+- O banco de dados precisa ser criado por migrations;
+- A aplicação deve estar bem documentada (comentários, README, endpoints, diagramas de
+fluxo, diagramas de arquitetura ...);
+Permitido
+- Linguagem: PHP >= 7.3.x com Slim Framework
