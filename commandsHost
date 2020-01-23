@@ -1,0 +1,8 @@
+docker run --name container-teste-mysql -e MYSQL_ROOT_PASSWORD=hostgator123 -d mysql/mysql-server:latest
+
+
+go get -u github.com/go-sql-driver/mysql
+go get -u github.com/rubenv/sql-migrate
+
+https://medium.com/@Martynas/golang-docker-and-databases-125a5c1894a8
+https://imasters.com.br/data/utilizando-docker-com-mysql
