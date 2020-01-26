@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"testeH/database"
-	"testeH/models"
+	"hostgatorBackend/database"
+	"hostgatorBackend/models"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -21,7 +21,7 @@ func GetAll(c *gin.Context) {
 	var shared map[string]interface{} = make(map[string]interface{}, 0)
 	var products map[string]interface{} = make(map[string]interface{}, 0)
 
-	rowsPrice, err := db.Query("SELECT * FROM prices;")
+	rowsPrice, err := db.Query("SELECT * FROM plans;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,20 +37,20 @@ func GetAll(c *gin.Context) {
 
 //GetOne -
 func GetOne(c *gin.Context) {
-	// c.Param("id")
-	var result []models.Plan
-	var res interface{} = make(map[string]interface{}, 0)
+	//Variaveis criadas para criar o retorno conforme exibido
 
-	res.(map[string]interface{})["shared"].(map[string]interface{})["products"] = result
+	var singlePlan models.Plan
+	row := db.QueryRow("SELECT * FROM plans WHERE id = ?;", c.Param("id"))
+	_ = row.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
+	singlePlan.Cycle = selectCycle(singlePlan.ID)
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, singlePlan)
 }
+func selectPlan(rowsPrice *sql.Rows) (prices interface{}) {
 
-func selectPlan(rowsPrice *sql.Rows) (prices []interface{}) {
-
+	var objMount map[string]models.Plan = make(map[string]models.Plan, 0)
 	for rowsPrice.Next() {
 		var singlePlan models.Plan
-		var objMount map[string]models.Plan = make(map[string]models.Plan, 0)
 		//Scan nas variaveis do banco para a variavel vinho
 		rowsPrice.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
 		nameIndex := singlePlan.CleanName
@@ -60,7 +60,9 @@ func selectPlan(rowsPrice *sql.Rows) (prices []interface{}) {
 
 		//Criando o index com o nome sem espaço do tipo
 		objMount[nameIndex] = singlePlan
-		prices = append(prices, objMount)
+		fmt.Println(objMount)
+		prices = objMount
+		// prices = append(prices, objMount)
 	}
 	return
 }

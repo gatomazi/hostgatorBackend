@@ -1,13 +1,11 @@
 package main
 
 import (
-	"testeH/log"
-	"testeH/router"
+	"hostgatorBackend/log"
+	"hostgatorBackend/router"
 )
 
 func main() {
-	// mocks.Populate()
-	// log.InicializaLog()
 	var r = router.StartRouter()
 	var err = r.Run(":4000")
 	if err != nil {

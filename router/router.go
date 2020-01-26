@@ -1,8 +1,8 @@
 package router
 
 import (
-	"testeH/middleware"
-	"testeH/prices"
+	"hostgatorBackend/middleware"
+	"hostgatorBackend/prices"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,9 +1,5 @@
 version: "2"
 services:
-  golang:
-    image: "golang:1.13-alpine3.11"
-    links:
-      - mysql
   mysql:
     image: "mysql:8.0.19"
     restart: "always"
