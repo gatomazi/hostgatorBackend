@@ -3,10 +3,10 @@ package prices
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"net/http"
 	"hostgatorBackend/database"
 	"hostgatorBackend/models"
+	"log"
+	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -67,7 +67,7 @@ func selectPlan(rowsPrice *sql.Rows) (prices interface{}) {
 	return
 }
 
-func selectCycle(idPlan int) (cycles []interface{}) {
+func selectCycle(idPlan int) (cycles interface{}) {
 	//Query para selecionar os ciclos daquele plano
 	rowsPrice, err := db.Query("SELECT type, priceRenew, priceOrder, months FROM cycles WHERE idPlan = ?;", idPlan)
 	fmt.Println(idPlan)
@@ -75,9 +75,9 @@ func selectCycle(idPlan int) (cycles []interface{}) {
 		log.Fatal(err)
 	}
 
+	var objMount map[string]models.CycleInfo = make(map[string]models.CycleInfo, 0)
 	for rowsPrice.Next() {
 		var singleCycle models.CycleInfo
-		var objMount map[string]models.CycleInfo = make(map[string]models.CycleInfo, 0)
 		//Scan nas variaveis do banco para a variavel singleCycle
 		rowsPrice.Scan(&singleCycle.Type, &singleCycle.PriceRenew, &singleCycle.PriceOrder, &singleCycle.Months)
 		fmt.Println(singleCycle)
@@ -85,7 +85,7 @@ func selectCycle(idPlan int) (cycles []interface{}) {
 		singleCycle.Type = ""
 		//Criando o index com o nome do tipo
 		objMount[nameIndex] = singleCycle
-		cycles = append(cycles, objMount)
+		cycles = objMount
 	}
 	return
 }

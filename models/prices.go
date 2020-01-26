@@ -7,10 +7,10 @@ package models
 // }
 
 type Plan struct {
-	ID        int           `json:"id"`
-	Name      string        `json:"name"`
-	CleanName string        `json:"cleanName,omitempty"`
-	Cycle     []interface{} `json:"cycle,omitempty"`
+	ID        int         `json:"id"`
+	Name      string      `json:"name"`
+	CleanName string      `json:"cleanName,omitempty"`
+	Cycle     interface{} `json:"cycle,omitempty"`
 }
 
 type Cycle struct {

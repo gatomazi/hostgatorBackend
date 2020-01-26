@@ -23,7 +23,7 @@ func GetDB() *sql.DB {
 	}
 	fmt.Println(*DockerIP)
 	//Conexão com o mysql do container
-	db, err := sql.Open("mysql", "hostgator:hostgator123@tcp("+*DockerIP+":3306)/teste?parseTime=true")
+	db, err := sql.Open("mysql", "hostgator:hostgator123@tcp("+*DockerIP+":3306)/hostgator?parseTime=true")
 
 	err = db.Ping()
 	if err != nil {

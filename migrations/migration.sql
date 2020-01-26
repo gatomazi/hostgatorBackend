@@ -46,9 +46,9 @@ INSERT INTO cycles (idPlan, type, priceRenew, priceOrder, months) VALUES
 (6, "quarterly", "82.77", "82.77", 3), 
 (335, "quarterly", "131.97", "131.97", 3), 
 
-(5, "quarterly", "220.66", "220.66", 12), 
-(6, "quarterly", "286.66", "286.66", 12), 
-(335, "quarterly", "503.88", "503.88", 12);
+(5, "annually", "220.66", "220.66", 12), 
+(6, "annually", "286.66", "286.66", 12), 
+(335, "annually", "503.88", "503.88", 12);
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
