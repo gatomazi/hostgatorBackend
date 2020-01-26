@@ -1,4 +1,4 @@
-# Foobar
+# Hostgator Backend
 
 You are going to need docker-compose and Go 1.13
 
