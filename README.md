@@ -2,6 +2,9 @@
 
 You are going to need docker-compose and Go 1.13
 
+[Golang Download](https://golang.org/dl/)
+[Docker Compose Download](https://docs.docker.com/compose/install/)
+
 ## Installation
 
 With the repo cloned, enter on it and make the mysql container up with the command:
