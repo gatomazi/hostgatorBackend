@@ -2,10 +2,8 @@ package prices
 
 import (
 	"database/sql"
-	"fmt"
 	"hostgatorBackend/database"
 	"hostgatorBackend/models"
-	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,17 +15,24 @@ var db = database.GetDB()
 
 //GetAll -
 func GetAll(c *gin.Context) {
+	var err error
 	//Variaveis criadas para criar o retorno conforme exibido
 	var shared map[string]interface{} = make(map[string]interface{}, 0)
 	var products map[string]interface{} = make(map[string]interface{}, 0)
 
 	rowsPrice, err := db.Query("SELECT * FROM plans;")
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusBadRequest, models.MakeNewErrorResponse("Internal Error", http.StatusBadRequest, "Ocorreu um erro ao consultar o banco", err.Error()))
+		return
+		// log.Fatal(err)
 	}
 	defer rowsPrice.Close()
 
-	products["products"] = selectPlan(rowsPrice)
+	products["products"], err = selectPlan(rowsPrice)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.MakeNewErrorResponse("Internal Error", http.StatusBadRequest, "Ocorreu um erro ao consultar o banco", err.Error()))
+		return
+	}
 	shared["shared"] = products
 
 	//Retorno Json
@@ -38,41 +43,58 @@ func GetAll(c *gin.Context) {
 //GetOne -
 func GetOne(c *gin.Context) {
 	//Variaveis criadas para criar o retorno conforme exibido
-
+	var err error
 	var singlePlan models.Plan
 	row := db.QueryRow("SELECT * FROM plans WHERE id = ?;", c.Param("id"))
-	_ = row.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
-	singlePlan.Cycle = selectCycle(singlePlan.ID)
+	err = row.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.MakeNewErrorResponse("Internal Error", http.StatusBadRequest, "Ocorreu um erro ao consultar a tabela plans pelo id "+c.Param("id"), err.Error()))
+		return
+	}
+	singlePlan.CleanName = ""
+
+	singlePlan.Cycle, err = selectCycle(singlePlan.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.MakeNewErrorResponse("Internal Error", http.StatusBadRequest, "Ocorreu um erro ao buscar os cycles", err.Error()))
+		return
+	}
 
 	c.JSON(http.StatusOK, singlePlan)
 }
-func selectPlan(rowsPrice *sql.Rows) (prices interface{}) {
+
+func selectPlan(rowsPrice *sql.Rows) (prices interface{}, err error) {
 
 	var objMount map[string]models.Plan = make(map[string]models.Plan, 0)
 	for rowsPrice.Next() {
 		var singlePlan models.Plan
-		//Scan nas variaveis do banco para a variavel vinho
-		rowsPrice.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
+		//Scan nas variaveis do banco para a variavel singlePlan
+		err = rowsPrice.Scan(&singlePlan.ID, &singlePlan.Name, &singlePlan.CleanName)
+		if err != nil {
+			return
+		}
+
 		nameIndex := singlePlan.CleanName
 		singlePlan.CleanName = ""
 
-		singlePlan.Cycle = selectCycle(singlePlan.ID)
+		singlePlan.Cycle, err = selectCycle(singlePlan.ID)
+		if err != nil {
+			return
+		}
 
 		//Criando o index com o nome sem espaço do tipo
 		objMount[nameIndex] = singlePlan
-		fmt.Println(objMount)
 		prices = objMount
 		// prices = append(prices, objMount)
 	}
 	return
 }
 
-func selectCycle(idPlan int) (cycles interface{}) {
+func selectCycle(idPlan int) (cycles interface{}, err error) {
 	//Query para selecionar os ciclos daquele plano
 	rowsPrice, err := db.Query("SELECT type, priceRenew, priceOrder, months FROM cycles WHERE idPlan = ?;", idPlan)
-	fmt.Println(idPlan)
 	if err != nil {
-		log.Fatal(err)
+		return
+		// log.Fatal(err)
 	}
 
 	var objMount map[string]models.CycleInfo = make(map[string]models.CycleInfo, 0)
@@ -80,7 +102,6 @@ func selectCycle(idPlan int) (cycles interface{}) {
 		var singleCycle models.CycleInfo
 		//Scan nas variaveis do banco para a variavel singleCycle
 		rowsPrice.Scan(&singleCycle.Type, &singleCycle.PriceRenew, &singleCycle.PriceOrder, &singleCycle.Months)
-		fmt.Println(singleCycle)
 		nameIndex := singleCycle.Type
 		singleCycle.Type = ""
 		//Criando o index com o nome do tipo

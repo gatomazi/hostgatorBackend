@@ -15,12 +15,12 @@ func StartRouter() *gin.Engine {
 		publicGroup = router.Group("/")
 	)
 
-	migracaoRedis(publicGroup)
+	pricesEndpoint(publicGroup)
 
 	return router
 }
 
-func migracaoRedis(g *gin.RouterGroup) {
+func pricesEndpoint(g *gin.RouterGroup) {
 	g.GET("prices", func(c *gin.Context) { middleware.SetHeaders(c, "OPTIONS, GET"); prices.GetAll(c) })
 	g.GET("prices/:id", func(c *gin.Context) { middleware.SetHeaders(c, "OPTIONS, GET"); prices.GetOne(c) })
 }

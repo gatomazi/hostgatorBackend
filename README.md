@@ -28,8 +28,9 @@ To up the Go server, you just need to run the command
 go run main.go
 ```
 
+<!--
 But if you want to start the server with a database in a different ip run
 
 ```bash
 go run main.go -dockerIp="xx.xx.xx.xx"
-```
+``` -->

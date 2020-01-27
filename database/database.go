@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"flag"
 	"fmt"
 	"log"
 
@@ -12,18 +11,21 @@ import (
 )
 
 var db *sql.DB
-var DockerIP = flag.String("dockerIp", "localhost", "Use for set the docker mysql image IP")
+
+// var DockerIP = flag.String("dockerIp", "localhost", "Use for set the docker mysql image IP")
+
+var DockerIP = "localhost"
 
 func GetDB() *sql.DB {
-	flag.Parse()
+	// flag.Parse()
 	var err error
 
 	if db != nil {
 		return db
 	}
-	fmt.Println(*DockerIP)
+
 	//Conexão com o mysql do container
-	db, err := sql.Open("mysql", "hostgator:hostgator123@tcp("+*DockerIP+":3306)/hostgator?parseTime=true")
+	db, err := sql.Open("mysql", "hostgator:hostgator123@tcp("+DockerIP+":3306)/hostgator?parseTime=true")
 
 	err = db.Ping()
 	if err != nil {
