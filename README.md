@@ -28,6 +28,12 @@ To up the Go server, you just need to run the command
 go run main.go
 ```
 
+To run the tests
+
+```bash
+go test
+```
+
 <!--
 But if you want to start the server with a database in a different ip run
 
